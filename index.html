@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starto | 24/7 AI Booking Assistant for US & UK HVAC Businesses</title>
+    <meta name="description" content="Never lose a $1,000 HVAC job to a delayed reply. Starto deploys 24/7 AI WhatsApp & SMS Auto-Booking Assistants that convert leads in under 10 seconds.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        cobalt: {
+                            DEFAULT: '#0047AB',
+                            50: '#eef6ff',
+                            100: '#d9ecff',
+                            600: '#0047AB',
+                            700: '#003685',
+                            800: '#002866',
+                        },
+                        cyan: {
+                            accent: '#00D2FF',
+                        },
+                        navy: {
+                            DEFAULT: '#0B132B',
+                            light: '#1C2541',
+                        },
+                        charcoal: '#0F172A',
+                        slate: {
+                            muted: '#64748B',
+                        },
+                        icewhite: '#F8FAFC'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .chat-bubble-ai {
+            background: linear-gradient(135deg, #0047AB 0%, #003685 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0047AB 0%, #00D2FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0047AB 0%, #0B132B 100%);
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #0047AB;
+            cursor: pointer;
+            border: 4px solid #FFFFFF;
+            box-shadow: 0 4px 10px rgba(0, 71, 171, 0.3);
+        }
+        /* Modal Transition Overlay */
+        .modal-backdrop {
+            background-color: rgba(11, 19, 43, 0.75);
+            backdrop-filter: blur(6px);
+        }
+    </style>
+</head>
+<body class="font-sans bg-icewhite text-charcoal antialiased selection:bg-cobalt selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white shadow-md shadow-cobalt/20 group-hover:scale-105 transition-transform duration-300">
+                    <i data-lucide="zap" class="w-5 h-5 text-cyan-accent"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-extrabold tracking-tight text-navy">STARTO<span class="text-cobalt"></span></span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-slate-muted -mt-1">trystarto.com</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-muted">
+                <a href="#how-it-works" class="hover:text-cobalt transition-colors">How It Works</a>
+                <a href="#demo" class="hover:text-cobalt transition-colors">Interactive Demo</a>
+                <a href="#calculator" class="hover:text-cobalt transition-colors">ROI Calculator</a>
+                <a href="#pricing" class="hover:text-cobalt transition-colors">Pricing</a>
+                <button onclick="openModal('General Inquiry / Demo Request')" class="hover:text-cobalt transition-colors">Contact Us</button>
+            </nav>
+
+            <!-- CTA Button -->
+            <div class="flex items-center gap-4">
+                <button onclick="openModal('15-Min Live Demo')" class="relative group overflow-hidden rounded-xl bg-cobalt px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cobalt/25 hover:bg-cobalt-700 hover:shadow-cobalt/40 transition-all duration-300 flex items-center gap-2">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <span>Book 15-Min Demo</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-gradient-to-b from-white via-icewhite to-slate-50">
+        <!-- Background Orbs -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cobalt/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/3 right-10 w-[300px] h-[300px] bg-cyan-accent/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                
+                <!-- Hero Left Column -->
+                <div class="lg:col-span-7 flex flex-col items-start">
+                    
+                    <!-- Floating Pill Tag -->
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cobalt-50 border border-cobalt/15 text-cobalt text-xs font-bold tracking-wide uppercase mb-6 shadow-sm">
+                        <span class="flex h-2 w-2 rounded-full bg-cobalt animate-ping"></span>
+                        <span>⚡ 24/7 AI Automation For US & UK HVAC Businesses</span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-navy tracking-tight leading-[1.15] mb-6">
+                        Never Lose A <span class="gradient-text">$1,000 HVAC Job</span> To A Delayed Reply Again.
+                    </h1>
+
+                    <!-- Subheadline -->
+                    <p class="text-lg sm:text-xl text-slate-muted font-normal leading-relaxed mb-8 max-w-2xl">
+                        Starto deploys 24/7 AI WhatsApp & SMS Auto-Booking Assistants that qualify emergency leads, collect job specs, and book appointments in under 10 seconds.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10">
+                        <button onclick="openModal('Get Custom AI Bot Plan')" class="rounded-xl bg-cobalt px-8 py-4 text-base font-bold text-white shadow-xl shadow-cobalt/30 hover:bg-cobalt-700 hover:shadow-cobalt/40 transition-all duration-300 flex items-center justify-center gap-3">
+                            <span>Get Your Custom AI Bot</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                        <a href="#demo" class="rounded-xl bg-white border border-slate-200 px-7 py-4 text-base font-bold text-navy hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="play-circle" class="w-5 h-5 text-cobalt"></i>
+                            <span>Try Interactive Demo</span>
+                        </a>
+                    </div>
+
+                    <!-- Trust Micro-Badges -->
+                    <div class="flex flex-wrap items-center gap-6 pt-6 border-t border-slate-200/80 w-full">
+                        <div class="flex items-center gap-2 text-xs font-semibold text-slate-muted">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                            <span>Works with Housecall Pro & ServiceTitan</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-slate-muted">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                            <span>Zero Technical Setup Required</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Column: Interactive Chat Simulator -->
+                <div class="lg:col-span-5 relative w-full">
+                    <!-- Floating Badges -->
+                    <div class="absolute -top-4 -right-2 z-20 bg-white px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 animate-float">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-bold text-navy">Response Time: 3.4s</span>
+                    </div>
+
+                    <div class="absolute -bottom-6 -left-4 z-20 bg-navy text-white px-4 py-3 rounded-2xl shadow-2xl border border-navy-light flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+                            ✓
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white">$850 Job Booked!</span>
+                            <span class="text-[10px] text-slate-400">Added to Google Calendar</span>
+                        </div>
+                    </div>
+
+                    <!-- Phone Frame Simulator -->
+                    <div class="mx-auto max-w-[380px] bg-navy rounded-[40px] p-4 shadow-2xl border-4 border-slate-800 relative">
+                        <div class="w-32 h-4 bg-slate-800 rounded-b-2xl mx-auto mb-3"></div>
+
+                        <div class="bg-navy-light p-3 rounded-2xl flex items-center gap-3 border border-slate-700/50 mb-3">
+                            <div class="relative">
+                                <div class="w-9 h-9 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-xs">
+                                    S
+                                </div>
+                                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-navy"></span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-white flex items-center gap-1">
+                                    Starto AI Assistant <i data-lucide="badge-check" class="w-3.5 h-3.5 text-cyan-accent"></i>
+                                </span>
+                                <span class="text-[10px] text-slate-400">Texas Air Solutions (HVAC)</span>
+                            </div>
+                        </div>
+
+                        <!-- Chat Container -->
+                        <div id="hero-chat-box" class="h-[360px] bg-slate-900/60 rounded-2xl p-3 overflow-y-auto space-y-3 text-xs flex flex-col scroll-smooth">
+                        </div>
+
+                        <div class="mt-3 bg-navy-light rounded-xl p-2.5 flex items-center gap-2 border border-slate-700/50">
+                            <input type="text" disabled placeholder="Bot replying automatically..." class="bg-transparent text-xs text-slate-400 w-full outline-none cursor-not-allowed">
+                            <button id="restart-chat-btn" title="Replay Simulation" class="p-1.5 rounded-lg bg-cobalt text-white hover:bg-cobalt-700 transition-colors">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics Bar -->
+    <section class="py-12 bg-white border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-xs font-bold uppercase tracking-wider text-slate-muted mb-8">
+                Compatible with Leading HVAC Field Service Systems & Pro Equipment
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                <div class="p-6 rounded-2xl bg-icewhite border border-slate-100 shadow-sm">
+                    <div class="text-3xl sm:text-4xl font-extrabold text-cobalt mb-1">&lt; 10 Seconds</div>
+                    <div class="text-xs font-bold text-slate-muted uppercase tracking-wider">Average Speed-to-Lead</div>
+                </div>
+                <div class="p-6 rounded-2xl bg-icewhite border border-slate-100 shadow-sm">
+                    <div class="text-3xl sm:text-4xl font-extrabold text-cobalt mb-1">+35%</div>
+                    <div class="text-xs font-bold text-slate-muted uppercase tracking-wider">Increase in Weekend Bookings</div>
+                </div>
+                <div class="p-6 rounded-2xl bg-icewhite border border-slate-100 shadow-sm">
+                    <div class="text-3xl sm:text-4xl font-extrabold text-cobalt mb-1">$0</div>
+                    <div class="text-xs font-bold text-slate-muted uppercase tracking-wider">Wasted Ad Inquiries</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-24 bg-icewhite">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-cobalt bg-cobalt-50 px-3 py-1 rounded-full border border-cobalt/10">3-Step Pipeline</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy mt-3 mb-4">How Starto Turns Inquiries Into Dollars</h2>
+                <p class="text-slate-muted text-base">Zero manual effort for your dispatchers. Your AI booking assistant works around the clock.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative group">
+                    <div class="w-12 h-12 rounded-xl bg-cobalt-50 text-cobalt font-extrabold text-xl flex items-center justify-center mb-6 group-hover:bg-cobalt group-hover:text-white transition-colors">
+                        01
+                    </div>
+                    <h3 class="text-xl font-bold text-navy mb-3">Instant Speed-to-Lead</h3>
+                    <p class="text-sm text-slate-muted leading-relaxed">
+                        When a homeowner texts your Google My Business, website, or WhatsApp, Starto responds in under 5 seconds—stopping them from calling a competitor.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative group">
+                    <div class="w-12 h-12 rounded-xl bg-cobalt-50 text-cobalt font-extrabold text-xl flex items-center justify-center mb-6 group-hover:bg-cobalt group-hover:text-white transition-colors">
+                        02
+                    </div>
+                    <h3 class="text-xl font-bold text-navy mb-3">Smart Qualification</h3>
+                    <p class="text-sm text-slate-muted leading-relaxed">
+                        The AI asks for emergency urgency, system type (AC vs Heat Pump), issue specs, and zip code to ensure high-margin job routing.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative group">
+                    <div class="w-12 h-12 rounded-xl bg-cobalt-50 text-cobalt font-extrabold text-xl flex items-center justify-center mb-6 group-hover:bg-cobalt group-hover:text-white transition-colors">
+                        03
+                    </div>
+                    <h3 class="text-xl font-bold text-navy mb-3">Calendar Dispatch Sync</h3>
+                    <p class="text-sm text-slate-muted leading-relaxed">
+                        Once qualified, Starto presents available time slots, collects confirmation, and automatically syncs to your calendar or CRM.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Live Demo Scenarios -->
+    <section id="demo" class="py-24 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-cobalt bg-cobalt-50 px-3 py-1 rounded-full border border-cobalt/10">Interactive Sandbox</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy mt-3 mb-4">Test Starto AI in Real-Time</h2>
+                <p class="text-slate-muted text-base">Select an HVAC customer scenario below to experience the automated booking flow live.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-icewhite p-6 sm:p-10 rounded-3xl border border-slate-200">
+                <div class="lg:col-span-5 space-y-4">
+                    <p class="text-xs font-bold text-slate-muted uppercase tracking-wider mb-2">Choose Customer Scenario:</p>
+                    
+                    <button onclick="loadScenario('emergency')" id="btn-emergency" class="scenario-btn w-full p-4 rounded-xl border text-left flex items-start gap-4 transition-all bg-white border-cobalt shadow-md">
+                        <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-navy text-sm">A: Emergency AC Breakdown</div>
+                            <div class="text-xs text-slate-muted mt-1">Customer has 92°F indoor heat & needs instant dispatch.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="loadScenario('maintenance')" id="btn-maintenance" class="scenario-btn w-full p-4 rounded-xl border border-slate-200 bg-white text-left flex items-start gap-4 hover:border-cobalt transition-all">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-cobalt flex items-center justify-center shrink-0">
+                            <i data-lucide="wrench" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-navy text-sm">B: Seasonal Tune-Up Check</div>
+                            <div class="text-xs text-slate-muted mt-1">Routine pre-winter furnace inspection request.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="loadScenario('quote')" id="btn-quote" class="scenario-btn w-full p-4 rounded-xl border border-slate-200 bg-white text-left flex items-start gap-4 hover:border-cobalt transition-all">
+                        <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-navy text-sm">C: New System Replacement Quote</div>
+                            <div class="text-xs text-slate-muted mt-1">High-ticket installation inquiry for entire home.</div>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <div class="bg-navy rounded-2xl p-5 shadow-xl border border-slate-800">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-bold text-white" id="demo-scenario-title">Scenario A: Emergency AC Breakdown</span>
+                            </div>
+                            <span class="text-[10px] text-cyan-accent font-mono">Live AI Engine Active</span>
+                        </div>
+
+                        <div id="interactive-chat-box" class="h-[320px] overflow-y-auto space-y-3 pr-2 text-xs flex flex-col">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive ROI Calculator Section -->
+    <section id="calculator" class="py-24 bg-gradient-to-b from-icewhite to-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-cobalt bg-cobalt-50 px-3 py-1 rounded-full border border-cobalt/10">Revenue Calculator</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy mt-3 mb-4">Calculate How Much Revenue You're Losing</h2>
+                <p class="text-slate-muted text-base">Adjust the sliders to estimate how much missed or delayed replies are costing your HVAC company each year.</p>
+            </div>
+
+            <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div class="lg:col-span-7 space-y-8">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-sm font-bold text-navy">Monthly Missed/Delayed Leads:</label>
+                            <span id="slider-leads-val" class="text-lg font-extrabold text-cobalt bg-cobalt-50 px-3 py-1 rounded-lg">20 leads</span>
+                        </div>
+                        <input type="range" id="slider-leads" min="5" max="100" value="20" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer custom-slider">
+                        <div class="flex justify-between text-[10px] text-slate-muted font-bold mt-1">
+                            <span>5 Leads</span>
+                            <span>50 Leads</span>
+                            <span>100 Leads</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-sm font-bold text-navy">Average HVAC Job Value ($):</label>
+                            <span id="slider-value-val" class="text-lg font-extrabold text-cobalt bg-cobalt-50 px-3 py-1 rounded-lg">$800</span>
+                        </div>
+                        <input type="range" id="slider-value" min="300" max="3000" value="800" step="100" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer custom-slider">
+                        <div class="flex justify-between text-[10px] text-slate-muted font-bold mt-1">
+                            <span>$300 (Repair)</span>
+                            <span>$1,500</span>
+                            <span>$3,000 (Replacement)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 gradient-bg p-8 rounded-2xl text-white text-center shadow-lg relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-cyan-accent/20 rounded-full blur-xl pointer-events-none"></div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-cyan-accent">Estimated Annual Loss Saved</span>
+                    <div id="roi-result" class="text-4xl sm:text-5xl font-extrabold my-4 text-white">$192,000</div>
+                    <p class="text-xs text-slate-300 mb-6">Based on a conservative 20% conversion rate of recovered leads via Starto 24/7 instant AI reply.</p>
+                    <button onclick="openModal('Claim Saved Revenue ($192k Saved)')" class="w-full py-3 px-6 rounded-xl bg-cyan-accent text-navy font-bold text-sm shadow-md hover:bg-white transition-colors">
+                        Claim Saved Revenue Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The 10-Second Guarantee Section -->
+    <section class="py-16 bg-navy text-white relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cobalt text-cyan-accent font-extrabold text-2xl mb-6 shadow-xl">
+                <i data-lucide="shield-check" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">The Starto 10-Second Guarantee</h2>
+            <p class="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+                If our AI Assistant fails to reply to incoming customer texts or web inquiries in under 10 seconds, <span class="text-cyan-accent font-bold">you don't pay your retainer that month. Period.</span>
+            </p>
+            <button onclick="openModal('Inquire Guarantee & Terms')" class="inline-flex items-center gap-2 text-xs font-bold text-slate-300 bg-navy-light hover:bg-slate-800 px-5 py-2.5 rounded-full border border-slate-700 transition-colors">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Ironclad Speed SLA Included in Every Plan → Inquire Details</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-icewhite">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-cobalt bg-cobalt-50 px-3 py-1 rounded-full border border-cobalt/10">Transparent Retainers</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-navy mt-3 mb-4">Pick Your Automation Tier</h2>
+                <p class="text-slate-muted text-base">No long-term contracts. Pause or cancel anytime.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                <!-- Starter Card -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-navy mb-2">Starter Automation</h3>
+                        <p class="text-xs text-slate-muted mb-6">Ideal for single-tech or solo HVAC operators.</p>
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-navy">$499</span>
+                            <span class="text-sm font-semibold text-slate-muted">/ month</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs text-slate-muted font-medium mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>24/7 AI SMS & WhatsApp Auto-Reply</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Google Calendar & Calendly Sync</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Up to 500 AI Conversations / mo</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Standard Lead Qualification</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Starter Plan ($499/mo)')" class="w-full py-3.5 px-6 rounded-xl border border-cobalt text-cobalt font-bold text-sm text-center hover:bg-cobalt-50 transition-colors">
+                        Select Starter
+                    </button>
+                </div>
+
+                <!-- Growth Engine Card -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-cobalt shadow-2xl relative flex flex-col justify-between transform md:-translate-y-2">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cobalt to-cyan-accent text-white text-[11px] font-extrabold uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
+                        Most Popular For Growth
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-navy mb-2 mt-2">Growth Engine</h3>
+                        <p class="text-xs text-slate-muted mb-6">For busy HVAC teams wanting full lead recovery.</p>
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-navy">$899</span>
+                            <span class="text-sm font-semibold text-slate-muted">/ month</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs text-slate-muted font-medium mb-8">
+                            <li class="flex items-center gap-2.5 text-navy font-semibold">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Everything in Starter + Unlimited Chats</span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-navy font-semibold">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Inactive Database Reactivation Engine</span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-navy font-semibold">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Automated Google 5-Star Review Requesting</span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-navy font-semibold">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>ServiceTitan & Housecall Pro Webhooks</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Growth Engine Plan ($899/mo)')" class="w-full py-3.5 px-6 rounded-xl bg-cobalt text-white font-bold text-sm text-center shadow-lg shadow-cobalt/30 hover:bg-cobalt-700 transition-colors">
+                        Deploy Growth Engine
+                    </button>
+                </div>
+
+                <!-- Custom Enterprise -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-navy mb-2">Custom Fleet</h3>
+                        <p class="text-xs text-slate-muted mb-6">Multi-location fleets & custom dispatch logic.</p>
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-navy">Custom</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs text-slate-muted font-medium mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Multi-location Territory Routing</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Custom Fine-Tuned AI Models</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-cobalt font-bold"></i>
+                                <span>Dedicated Technical Account Manager</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Custom Enterprise Plan')" class="w-full py-3.5 px-6 rounded-xl border border-slate-300 text-navy font-bold text-sm text-center hover:bg-slate-50 transition-colors">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy text-slate-400 py-12 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white">
+                        <i data-lucide="zap" class="w-4 h-4 text-cyan-accent"></i>
+                    </div>
+                    <span class="text-lg font-bold text-white">Starto Inc.</span>
+                    <span class="text-slate-500">| trystarto.com</span>
+                </div>
+
+                <div class="flex items-center gap-6 text-slate-300">
+                    <a href="mailto:mahiraj@trystarto.com" class="hover:text-cyan-accent transition-colors">Contact: mahiraj@trystarto.com</a>
+                    <button onclick="openModal('Privacy Policy Inquiry')" class="hover:text-cyan-accent transition-colors">Privacy Policy</button>
+                    <button onclick="openModal('Terms of Service Inquiry')" class="hover:text-cyan-accent transition-colors">Terms of Service</button>
+                </div>
+
+                <div>
+                    © 2026 Starto Inc. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE CONTACT & DEMO BOOKING MODAL -->
+    <div id="contact-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-slate-200 transform scale-95 transition-transform duration-300 overflow-hidden">
+            <!-- Modal Close Button -->
+            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-navy flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Form State View -->
+            <div id="modal-form-view">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-9 h-9 rounded-xl bg-cobalt-50 text-cobalt flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-navy">Book A Demo With Starto</h3>
+                        <p class="text-xs text-slate-muted">Targeted response directly from Mahiraj (Founder)</p>
+                    </div>
+                </div>
+
+                <!-- Selected Service Tag -->
+                <div class="bg-cobalt-50 text-cobalt border border-cobalt/20 rounded-lg px-3 py-1.5 text-xs font-bold inline-flex items-center gap-1.5 my-3">
+                    <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                    <span>Selected Plan: <span id="modal-plan-name">15-Min Live Demo</span></span>
+                </div>
+
+                <form id="starto-lead-form" onsubmit="handleFormSubmit(event)" class="space-y-4 mt-2">
+                    <input type="hidden" id="form-plan-input" name="plan" value="15-Min Live Demo">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-navy mb-1">Your Full Name *</label>
+                            <input type="text" id="lead-name" required placeholder="e.g. John Miller" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-icewhite text-xs text-navy outline-none focus:border-cobalt focus:bg-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-navy mb-1">Work Email Address *</label>
+                            <input type="email" id="lead-email" required placeholder="john@texasairhvac.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-icewhite text-xs text-navy outline-none focus:border-cobalt focus:bg-white transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-navy mb-1">Phone Number *</label>
+                            <input type="tel" id="lead-phone" required placeholder="+1 (512) 555-0199" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-icewhite text-xs text-navy outline-none focus:border-cobalt focus:bg-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-navy mb-1">HVAC Company Name *</label>
+                            <input type="text" id="lead-company" required placeholder="e.g. Texas Air Solutions" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-icewhite text-xs text-navy outline-none focus:border-cobalt focus:bg-white transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-navy mb-1">Tell Us About Your Setup / Questions</label>
+                        <textarea id="lead-message" rows="3" placeholder="How many techs do you run? What booking software do you currently use?" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-icewhite text-xs text-navy outline-none focus:border-cobalt focus:bg-white transition-all"></textarea>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="submit-btn" class="w-full py-3.5 px-6 rounded-xl bg-cobalt text-white font-bold text-sm shadow-lg shadow-cobalt/30 hover:bg-cobalt-700 transition-colors flex items-center justify-center gap-2">
+                            <span>Send Request To mahiraj@trystarto.com</span>
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-center text-slate-muted">Direct Email Dispatch to mahiraj@trystarto.com • 100% Privacy Guaranteed</p>
+                </form>
+            </div>
+
+            <!-- Success State View -->
+            <div id="modal-success-view" class="hidden text-center py-6">
+                <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="w-10 h-10"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-navy mb-2">Request Received!</h3>
+                <p class="text-xs text-slate-muted max-w-sm mx-auto mb-6">
+                    Thank you, <span id="success-user-name" class="font-bold text-navy"></span>! Your inquiry regarding <span id="success-plan-name" class="font-bold text-cobalt"></span> has been routed to <strong class="text-navy">mahiraj@trystarto.com</strong>.
+                </p>
+                <div class="bg-icewhite p-4 rounded-xl border border-slate-200 text-left text-xs space-y-1.5 mb-6">
+                    <div class="flex justify-between"><span class="text-slate-muted">Company:</span> <span id="success-company" class="font-bold text-navy"></span></div>
+                    <div class="flex justify-between"><span class="text-slate-muted">Contact Email:</span> <span id="success-email" class="font-bold text-navy"></span></div>
+                    <div class="flex justify-between"><span class="text-slate-muted">Expected Response:</span> <span class="font-bold text-emerald-600">Under 2 Hours</span></div>
+                </div>
+                <button onclick="closeModal()" class="w-full py-3 px-6 rounded-xl bg-navy text-white font-bold text-sm hover:bg-navy-light transition-colors">
+                    Back To Website
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- 1. TOAST NOTIFICATIONS SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-xs font-bold text-white transition-all duration-300 transform translate-y-4 opacity-0 ${type === 'success' ? 'bg-emerald-600' : 'bg-cobalt'}`;
+            
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : 'info'}" class="w-4 h-4 shrink-0"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // --- 2. MODAL LOGIC ---
+        function openModal(planName = 'General Inquiry') {
+            const modal = document.getElementById('contact-modal');
+            const modalPlanText = document.getElementById('modal-plan-name');
+            const formPlanInput = document.getElementById('form-plan-input');
+            const formView = document.getElementById('modal-form-view');
+            const successView = document.getElementById('modal-success-view');
+
+            modalPlanText.innerText = planName;
+            formPlanInput.value = planName;
+
+            formView.classList.remove('hidden');
+            successView.classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.firstElementChild.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.add('opacity-0');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Handle Lead Form Submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            const phone = document.getElementById('lead-phone').value;
+            const company = document.getElementById('lead-company').value;
+            const message = document.getElementById('lead-message').value;
+            const plan = document.getElementById('form-plan-input').value;
+
+            // Form Mailto Trigger Fallback & Direct Contact Link
+            const mailtoSubject = encodeURIComponent(`New Lead: ${plan} - ${company}`);
+            const mailtoBody = encodeURIComponent(
+                `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nCompany: ${company}\nPlan/Inquiry: ${plan}\n\nMessage:\n${message}`
+            );
+
+            // Trigger mailto silently for direct email app option
+            setTimeout(() => {
+                window.location.href = `mailto:mahiraj@trystarto.com?subject=${mailtoSubject}&body=${mailtoBody}`;
+            }, 1200);
+
+            // Populate Success Modal
+            document.getElementById('success-user-name').innerText = name;
+            document.getElementById('success-plan-name').innerText = plan;
+            document.getElementById('success-company').innerText = company;
+            document.getElementById('success-email').innerText = email;
+
+            // Switch Modal State
+            document.getElementById('modal-form-view').classList.add('hidden');
+            document.getElementById('modal-success-view').classList.remove('hidden');
+
+            showToast(`Inquiry sent to mahiraj@trystarto.com!`, 'success');
+
+            // Reset Form Fields
+            document.getElementById('starto-lead-form').reset();
+        }
+
+        // --- 3. HERO CHAT SIMULATOR SCRIPT ---
+        const heroChatMessages = [
+            { sender: 'user', text: "Hi, my AC unit just died and it's 95° outside! Do you have anyone available today?" },
+            { sender: 'ai', text: "Hello! I am Starto AI for Texas Air Solutions. I can definitely help dispatch a technician. What is your home Zip Code?" },
+            { sender: 'user', text: "Zip is 78701." },
+            { sender: 'ai', text: "Got it! We have emergency techs in 78701 today. I have an emergency slot open at 2:30 PM today. Would you like me to reserve this for you?" },
+            { sender: 'user', text: "Yes please, 2:30 PM works perfectly!" },
+            { sender: 'ai', text: "🎉 Confirmed! Job booked for 2:30 PM today. Confirmation sent to your SMS." }
+        ];
+
+        function runHeroChatAnimation() {
+            const container = document.getElementById('hero-chat-box');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let delay = 300;
+            heroChatMessages.forEach((msg) => {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = msg.sender === 'user' 
+                        ? 'self-end bg-slate-800 text-slate-100 p-2.5 rounded-2xl rounded-tr-none max-w-[80%] shadow-sm transition-all duration-300 opacity-0 transform translate-y-2'
+                        : 'self-start chat-bubble-ai text-white p-2.5 rounded-2xl rounded-tl-none max-w-[80%] shadow-md transition-all duration-300 opacity-0 transform translate-y-2';
+                    
+                    bubble.innerHTML = `<p>${msg.text}</p>`;
+                    container.appendChild(bubble);
+
+                    setTimeout(() => {
+                        bubble.classList.remove('opacity-0', 'translate-y-2');
+                    }, 50);
+
+                    container.scrollTop = container.scrollHeight;
+                }, delay);
+
+                delay += (msg.sender === 'user' ? 1200 : 1800);
+            });
+        }
+
+        document.getElementById('restart-chat-btn')?.addEventListener('click', () => {
+            runHeroChatAnimation();
+            showToast('Replaying live AI simulation...');
+        });
+
+        window.addEventListener('DOMContentLoaded', runHeroChatAnimation);
+
+        // --- 4. INTERACTIVE DEMO SCENARIOS ---
+        const demoScenarios = {
+            emergency: {
+                title: "Scenario A: Emergency AC Breakdown",
+                chats: [
+                    { sender: 'user', text: "Emergency! Air handler is leaking water everywhere in attic." },
+                    { sender: 'ai', text: "🚨 Emergency flagged. Turn off your HVAC system breaker immediately to prevent water damage. What is your address?" },
+                    { sender: 'user', text: "412 Oak Lane, Austin, TX" },
+                    { sender: 'ai', text: "Dispatch slot reserved for 11:15 AM today. Tech Travis will call 15 mins prior. Confirmation code: #HVAC-904" }
+                ]
+            },
+            maintenance: {
+                title: "Scenario B: Seasonal Tune-Up Check",
+                chats: [
+                    { sender: 'user', text: "Looking to schedule pre-winter furnace inspection." },
+                    { sender: 'ai', text: "Great timing! Our 21-point furnace tune-up is currently $89. Which day works best: Thursday or Friday afternoon?" },
+                    { sender: 'user', text: "Friday afternoon works best." },
+                    { sender: 'ai', text: "📅 Booked for Friday at 2:00 PM. Calendar invitation added to your schedule!" }
+                ]
+            },
+            quote: {
+                title: "Scenario C: System Replacement Quote",
+                chats: [
+                    { sender: 'user', text: "Need a quote for replacing a 15-year-old Heat Pump." },
+                    { sender: 'ai', text: "We offer free in-home replacement estimates with Carrier & Trane options. How many sq ft is your home?" },
+                    { sender: 'user', text: "About 2,400 sq ft." },
+                    { sender: 'ai', text: "Perfect. Senior Estimator Mike can come by tomorrow at 10:00 AM. May I lock in this estimate slot?" }
+                ]
+            }
+        };
+
+        function loadScenario(type) {
+            const data = demoScenarios[type];
+            if (!data) return;
+
+            document.getElementById('demo-scenario-title').innerText = data.title;
+
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('border-cobalt', 'shadow-md');
+                btn.classList.add('border-slate-200');
+            });
+            document.getElementById(`btn-${type}`)?.classList.add('border-cobalt', 'shadow-md');
+
+            const box = document.getElementById('interactive-chat-box');
+            box.innerHTML = '';
+
+            data.chats.forEach((msg, idx) => {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = msg.sender === 'user'
+                        ? 'self-end bg-slate-800 text-slate-100 p-2.5 rounded-2xl rounded-tr-none max-w-[85%]'
+                        : 'self-start chat-bubble-ai text-white p-2.5 rounded-2xl rounded-tl-none max-w-[85%] shadow-md';
+                    
+                    bubble.innerText = msg.text;
+                    box.appendChild(bubble);
+                    box.scrollTop = box.scrollHeight;
+                }, idx * 600);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => loadScenario('emergency'));
+
+        // --- 5. ROI CALCULATOR SCRIPT ---
+        const sliderLeads = document.getElementById('slider-leads');
+        const sliderValue = document.getElementById('slider-value');
+        const sliderLeadsVal = document.getElementById('slider-leads-val');
+        const sliderValueVal = document.getElementById('slider-value-val');
+        const roiResult = document.getElementById('roi-result');
+
+        function calculateROI() {
+            const leads = parseInt(sliderLeads.value);
+            const value = parseInt(sliderValue.value);
+
+            sliderLeadsVal.innerText = `${leads} leads`;
+            sliderValueVal.innerText = `$${value.toLocaleString()}`;
+
+            const annualSaved = Math.round(leads * value * 12 * 0.20);
+            roiResult.innerText = `$${annualSaved.toLocaleString()}`;
+        }
+
+        sliderLeads?.addEventListener('input', calculateROI);
+        sliderValue?.addEventListener('input', calculateROI);
+        calculateROI();
+    </script>
+</body>
+</html>
